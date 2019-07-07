@@ -1,3 +1,6 @@
+//Please read README.txt for further information.
+//Author - Jack L. Clements
+
 #include <random>
 #include "ConveyerBelt.h"
 #include "ComponentStates.h"

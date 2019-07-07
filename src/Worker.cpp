@@ -33,19 +33,19 @@ Worker::~Worker(){
 void Worker::setComponent(Component* t_component){
 	if(!componentA){
 		componentA = t_component;
+		state = ::WAITING; 
 	}
 	else{
-		componentB = t_component;
-	}
-	state = ::WAITING;
+		componentB = t_component; 
+	}//The worker will not be prevented from placing a product back down since the countdown check
 }
 
 Component* Worker::takeProduct(){
 	Component* tempComponent = componentA;
-	if(componentB){
+	if(componentB){ //if the worker is already holding their next component
 		componentA = componentB;
 		componentB = 0;
-		state = ::WAITING;
+		state = ::WAITING; //waiting for next piece again
 	}
 	else{
 		componentA = 0;
@@ -77,8 +77,8 @@ void Worker::assemble(){
 void Worker::assembleCountdown(){
 	if(countdown > 0){
 		--countdown;
-	if(countdown == 0){
 	}
+	if(countdown == 0){
 		componentA->assemble(componentB);
 		state = ::COMPLETE;
 	}

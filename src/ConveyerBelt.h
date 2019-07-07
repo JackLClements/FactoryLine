@@ -7,6 +7,7 @@ class ConveyerBelt{
 private:
 	int size; 
 	BeltSegment* start;
+	//Static members, used to store results
 	static int countA;
 	static int countB;
 	static int countP;

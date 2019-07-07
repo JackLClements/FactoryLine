@@ -50,7 +50,7 @@ void BeltSegment::setComponent(Component *t_component){
 * Adds to the totals produced if the belt segment element has no further elements.
 */
 void BeltSegment::roll(){
-	print();
+	//print();
 	if(nextSegment){ //Roll each belt part first, doing the decision work on the way up to avoid clogging up the next belt segment
 		nextSegment->roll();
 	}
@@ -81,7 +81,7 @@ void BeltSegment::roll(){
 						component = workers.at(i)->takeProduct();
 						hasMoved = true;
 					}
-					if(component && !hasMoved){
+					if(component && !component->isComplete() && !hasMoved){
 						workers.at(i)->setComponent(component);
 						hasMoved = true;
 					}
@@ -119,7 +119,9 @@ void BeltSegment::addWorker(Worker* t_worker){
 void BeltSegment::print(){ //Used for testing, since this was written in a text editor.
 	cout << "Belt Segment: " << id << " ";
 	if(component){
-		cout << "contains - " << component->getType() << " ";
+		cout << "contains - ";
+		component->printComponentType();
+		cout << " ";
 	}
 	for(int i = 0; i < workers.size(); i++){
 		cout << "Worker " << i << " is ";
