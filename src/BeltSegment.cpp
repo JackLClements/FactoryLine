@@ -1,16 +1,13 @@
 #include "BeltSegment.h"
-#include "ComponentStates.h"
-#include <iostream>
+#include "ConveyerBelt.h"
 
-using namespace std;
-using namespace WorkerStates;
-
+//Constructors/Destructors 
 
 BeltSegment::BeltSegment(Worker* t_workerA, Worker* t_workerB, int t_id){
 	workers.push_back(t_workerA);
 	workers.push_back(t_workerB);
-	nextSegment = nullptr;
-	component = nullptr;
+	nextSegment = 0;
+	component = 0;
 	id = t_id;
 }
 
@@ -20,43 +17,41 @@ BeltSegment::BeltSegment(){
 	id = 0;
 }
 
+//Note - copy constructor only defined here to match rule of 3, duplicating a linked list like this could cause undefined behvaiour
+BeltSegment::BeltSegment(const BeltSegment& t_beltSegment){
+	workers = t_beltSegment.workers;
+	nextSegment = t_beltSegment.nextSegment;
+	component = t_beltSegment.component;
+	id = t_beltSegment.id;
+}
+
 BeltSegment::~BeltSegment(){
 	delete component;
+	if(nextSegment){
+		delete nextSegment;
+	}
 }
 
-void BeltSegment::setNextSegment(BeltSegment *next){
-	nextSegment = next;
+//Accessor Methods
+
+void BeltSegment::setNextSegment(BeltSegment *t_next){
+	nextSegment = t_next;
 }
 
-void BeltSegment::setComponent(Component *component2){
-	component = component2;
+void BeltSegment::setComponent(Component *t_component){
+	component = t_component;
 }
+
+//Other methods
 
 /*
-
-IF A BELT SEGMENT HAS A COMPONENT ON IT
-- IF WORKER A HAS A COMPONENT ALREADY
--- TEST IF THEY CAN BEGIN ASSEMBLY
---- ASSEMBLE, CLEAR BELT
--- ELSE, TEST  TO WORKER B
--- TEST IF WORKER B HAS A COMPONENT ALREADY
-- GIVE TO WORKER A
-
-- For each worker 
--- Do I need it?
--- Can I take it?
--- If neither, pass it to the next worker
--- This makes the assumption that ordering takes total precedence, then collection takes precedence over completion
--- We could make this multi-threaded by locking on belt access, thus making it first-come, first-served
-
-For each belt segment
-- Is there something here? Proceed to worker logic
-- Is this empty? Proceed to pick up logic
-- This will likely lead to a lot of instances of workers being unable to put down an object
+* A single step of the simulation.
+* Rolls the belt in front first, then iterates through workers, allowing them to take a component, assemble or put a product down
+* Adds to the totals produced if the belt segment element has no further elements.
 */
-
 void BeltSegment::roll(){
-	if(nextSegment){ //roll next part first? essentially we do the work on the way up?
+	print();
+	if(nextSegment){ //Roll each belt part first, doing the decision work on the way up to avoid clogging up the next belt segment
 		nextSegment->roll();
 	}
 	
@@ -72,7 +67,8 @@ void BeltSegment::roll(){
 					break;
 				case ::WAITING : //WAITING - Waiting for a matching assembling component, will take if one is found
 					if(component && workers.at(i)->canCombine(component) && !hasMoved){
-						workers.at(i)->assemble(component);
+						workers.at(i)->setComponent(component);
+						workers.at(i)->assemble();
 						component = 0;
 						hasMoved = true;
 					}
@@ -82,19 +78,28 @@ void BeltSegment::roll(){
 					break;
 				case ::COMPLETE : //COMPLETE - completed assembly
 					if(!component && !hasMoved){
-						component = workers.at(i)->getProduct();
+						component = workers.at(i)->takeProduct();
+						hasMoved = true;
+					}
+					if(component && !hasMoved){
+						workers.at(i)->setComponent(component);
 						hasMoved = true;
 					}
 					break;
 		}
 	}
-	if(!nextSegment){
-		if(component){
-			cout << "Rolled off the line - " << component->getType() << endl;
-		}
-		else{
-			cout << "Nothing rolled off the line." << endl;
-		}
+	if(!nextSegment && component){
+			switch(component->getType()){
+				case ::A:
+					ConveyerBelt::addA();
+					break;
+				case ::B:
+					ConveyerBelt::addB();
+					break;
+				case ::P:
+					ConveyerBelt::addP();
+					break;
+			}
 	}
 	else{
 		if(component){
@@ -107,9 +112,20 @@ BeltSegment* BeltSegment::next(){
 	return nextSegment;
 }
 
-void BeltSegment::addWorker(Worker* worker){
-	workers.push_back(worker);
+void BeltSegment::addWorker(Worker* t_worker){
+	workers.push_back(t_worker);
 }
 
+void BeltSegment::print(){ //Used for testing, since this was written in a text editor.
+	cout << "Belt Segment: " << id << " ";
+	if(component){
+		cout << "contains - " << component->getType() << " ";
+	}
+	for(int i = 0; i < workers.size(); i++){
+		cout << "Worker " << i << " is ";
+		workers.at(i)->printWorker();
+	}
+	cout << endl;
+}
 
 

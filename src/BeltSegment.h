@@ -1,21 +1,29 @@
 #include "Worker.h"
-#include "Component.h"
-#include <vector> 
-using namespace std;
+#include <vector>
+
+#ifndef BELT_SEGMENT_H
+#define BELT_SEGMENT_H
 
 class BeltSegment{
 	private:
 		vector<Worker*> workers;
-		BeltSegment* nextSegment; //need a hasNext method
+		BeltSegment* nextSegment;
 		Component* component;
 		int id;
 	public:
+		//Creators/Destructors
 		BeltSegment(Worker* t_workerA, Worker* t_workerB, int t_id);
 		BeltSegment();
+		BeltSegment(const BeltSegment& t_beltSegment);
 		~BeltSegment();
-		void setNextSegment(BeltSegment* next);
-		void setComponent(Component* component2);
+		//Accessor methods
+		void setNextSegment(BeltSegment* t_next);
+		void setComponent(Component* t_component);
+		//Mutator Methods
 		void roll(); //main logic function
-		void addWorker(Worker* worker);
+		void addWorker(Worker* t_worker);
+		void print();
 		BeltSegment* next();
 };
+
+#endif

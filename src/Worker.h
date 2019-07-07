@@ -1,26 +1,31 @@
 #include "Component.h"
-#include "ComponentStates.h" //TODO rename
+#include "ComponentStates.h"
 #ifndef WORKER_H
 #define WORKER_H
 
 using namespace WorkerStates;
 
 class Worker{
-private:
-	int countdown;
-	WorkerState state;
-	Component* component; //think about memory here as you could be in trouble down the line w/pointers
-	//do we want the associated conveyor position as a function pointer?
 public:
+	//Constructor/Destructors
 	Worker();
+	Worker(const Worker& t_worker);
 	~Worker();
+	//Accessor methods
 	void setComponent(Component* t_component);
-	void assemble(Component* t_component);
+	WorkerState getState();
+	Component* takeProduct();
+	//Mutator methods
+	void assemble();
 	bool canCombine(Component* t_component);
 	void assembleCountdown();
 	bool hasAssembled();
-	WorkerState getState();
-	Component* getProduct();
+	void printWorker();
+private:
+	int countdown;
+	WorkerState state;
+	Component* componentA;
+	Component* componentB;
 };
 
 #endif

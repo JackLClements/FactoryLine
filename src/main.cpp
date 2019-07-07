@@ -1,28 +1,31 @@
-#include <iostream>
 #include <random>
 #include "ConveyerBelt.h"
 #include "ComponentStates.h"
+//Preprocessor Direcives 
+#define BELT_SIZE 3
+#define RUN_CYCLES 100
 
-using namespace ComponentStates;
-
-using namespace std; 
-
+//Predefine functions
 Component* generateNewComponent();
 
+//Define functions
 int main(int argc, const char** argv)
 {
-    cout << "Hello, world!" << endl;
-    ConveyerBelt belt(3);
-    for(int i = 0; i < 100; i++){
-    	cout << "test" << endl;
+    ConveyerBelt belt(BELT_SIZE);
+    for(int i = 0; i < RUN_CYCLES; i++){
     	belt.addPart(generateNewComponent());
     	belt.run();
     }
+    cout << "Items produced: " << ConveyerBelt::getP() << endl;
+    cout << "Components of Type A never picked up: " << ConveyerBelt::getA() << endl;
+    cout << "Components of Type B never picked up: " << ConveyerBelt::getB() << endl;
     return 0;
 }
 
-Component* generateNewComponent(){
-	unsigned seed = std::chrono::system_clock::now().time_since_epoch().count();
+
+//Generates a new component of type A, B or empty.
+Component* generateNewComponent(){ 
+	unsigned seed = chrono::system_clock::now().time_since_epoch().count();
     default_random_engine generator (seed);
 	uniform_int_distribution<int> distribution(0,2);
 
@@ -37,9 +40,3 @@ Component* generateNewComponent(){
 			return 0; //should never occur, but my compiler shouts at me otherwise
 	}
 }
-
-//DESIGN DECISIONS
-/*
-The ability of a regular linked list to implicitly know hwich element is next gives it an advantage over a vector
-
-*/
