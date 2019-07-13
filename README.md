@@ -8,14 +8,14 @@ I have implemented the conveyer belt as a collection of linked list-like element
 The ability of a regular linked list to implicitly know which element is next gives it an advantage over a vector.
 
 ## ASSUMPTIONS 
-Assumption - that the actions of the first worker attached to any given conveyer belt segment is given priority
-Assumption - that placing an object back onto the belt is given priority 
-Assumption - that the conveyer belt only rolls in one direction
-Assumption - that after four steps assembling a product, a worker places the product back on their assigned belt segment (if clear)
-Assumption - that whilst assembling a product, the worker does not pick up a new product, as both their hands are full
-Assumption - that the worker's second hand after assembling a product can only hold another component, not do any futher 
+- that the actions of the first worker attached to any given conveyer belt segment is given priority
+- that placing an object back onto the belt is given priority 
+- that the conveyer belt only rolls in one direction
+- that after four steps assembling a product, a worker places the product back on their assigned belt segment (if clear)
+- that whilst assembling a product, the worker does not pick up a new product, as both their hands are full
+- that the worker's second hand after assembling a product can only hold another component, not do any futher 
 comparisons or hold a third component
-Assumption - that we want the sum total of all components and items produced by all conveyer belts
+- that we want the sum total of all components and items produced by all conveyer belts
 
 ## OUTPUT  
 The conveyer belt using the specified RNG input appears to produce completed components generally just over 1/3rd of the time,
